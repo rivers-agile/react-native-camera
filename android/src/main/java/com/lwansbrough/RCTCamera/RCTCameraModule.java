@@ -226,6 +226,9 @@ public class RCTCameraModule extends ReactContextBaseJavaModule {
                     case RCT_CAMERA_CAPTURE_TARGET_CAMERA_ROLL:
                         BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
                         Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, bitmapOptions);
+
+                        createMediaDirIfMissing();
+
                         String url = MediaStore.Images.Media.insertImage(
                                 _reactContext.getContentResolver(),
                                 bitmap, options.getString("title"),
@@ -342,4 +345,21 @@ public class RCTCameraModule extends ReactContextBaseJavaModule {
             return null;
         }
     }
+
+    public static void createMediaDirIfMissing() {
+        File sdcard = Environment.getExternalStorageDirectory();
+        if (sdcard == null) {
+            return;
+        }
+
+        File dcim = new File(sdcard, "DCIM");
+        if (dcim == null) {
+            return;
+        }
+
+        File camera = new File(dcim, "Camera");
+        if (!camera.exists()) {
+            camera.mkdir();
+        }
+      }
 }
